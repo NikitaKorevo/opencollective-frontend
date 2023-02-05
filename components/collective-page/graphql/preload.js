@@ -83,5 +83,6 @@ export const preloadCollectivePageGraphqlQueries = async (slug, client) => {
       );
     }
     await Promise.all(queries);
+    return collective;
   }
 };

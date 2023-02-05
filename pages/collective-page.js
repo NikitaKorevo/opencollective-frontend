@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { withRouter } from 'next/router';
 import { createGlobalStyle } from 'styled-components';
 
+import { initClient } from '../lib/apollo-client';
 import { getCollectivePageMetadata } from '../lib/collective.lib';
 import { generateNotFoundError } from '../lib/errors';
 import { addParentToURLIfMissing, getCollectivePageCanonicalURL } from '../lib/url-helpers';
@@ -57,22 +58,6 @@ const GlobalStyles = createGlobalStyle`
  * to render `components/collective-page` with everything needed.
  */
 class CollectivePage extends React.Component {
-  static async getInitialProps({ client, req, res, query: { slug, status, step, mode, action } }) {
-    if (res && req && (req.language || req.locale === 'en')) {
-      res.set('Cache-Control', 'public, s-maxage=300');
-    }
-
-    let skipDataFromTree = false;
-
-    // If on server side
-    if (req) {
-      await preloadCollectivePageGraphqlQueries(slug, client);
-      skipDataFromTree = true;
-    }
-
-    return { slug, status, step, mode, skipDataFromTree, action };
-  }
-
   static propTypes = {
     slug: PropTypes.string.isRequired, // from getInitialProps
     /** A special status to show the notification bar (collective created, archived...etc) */
@@ -230,6 +215,39 @@ class CollectivePage extends React.Component {
       </Page>
     );
   }
+}
+
+export async function getServerSideProps({ req, res, query: { slug, status, step, mode, action } }) {
+  if (res && req && (req.language || req.locale === 'en')) {
+    res.set('Cache-Control', 'public, s-maxage=300');
+  }
+
+  let skipDataFromTree = false;
+
+  // If on server side
+
+  if (req) {
+    const client = initClient();
+    const collective = await preloadCollectivePageGraphqlQueries(slug, client);
+    skipDataFromTree = true;
+
+    if (!collective) {
+      return {
+        notFound: true,
+      };
+    }
+  }
+
+  return {
+    props: {
+      slug,
+      status: status ?? null,
+      step: step ?? null,
+      mode: mode ?? null,
+      skipDataFromTree,
+      action: action ?? null,
+    },
+  };
 }
 
 const addCollectivePageData = graphql(collectivePageQuery, {

@@ -151,9 +151,11 @@ const { Consumer: UserConsumer } = UserContext;
 const withUser = WrappedComponent => {
   const WithUser = props => <UserConsumer>{context => <WrappedComponent {...context} {...props} />}</UserConsumer>;
 
-  WithUser.getInitialProps = async context => {
-    return WrappedComponent.getInitialProps ? await WrappedComponent.getInitialProps(context) : {};
-  };
+  if (WrappedComponent.getInitialProps) {
+    WithUser.getInitialProps = async context => {
+      return WrappedComponent.getInitialProps ? await WrappedComponent.getInitialProps(context) : {};
+    };
+  }
 
   return WithUser;
 };
