@@ -12,6 +12,7 @@ import HTMLContent from '../HTMLContent';
 import InlineEditField from '../InlineEditField';
 import LinkCollective from '../LinkCollective';
 import RichTextEditor from '../RichTextEditor';
+import ShareButton from '../ShareButton';
 import { P } from '../Text';
 
 import CommentActions from './CommentActions';
@@ -50,10 +51,11 @@ const Comment = ({
   const [isEditing, setEditing] = React.useState(false);
   const hasActions = !withoutActions && !isEditing && (canEdit || canDelete);
   const hasReactionsPicker = canReply && !withoutActions;
+  const anchorHash = `comment-${new Date(comment.createdAt).getTime()}`;
 
   return (
-    <Container width="100%" data-cy="comment">
-      <Flex mb={3} justifyContent="space-between">
+    <Container width="100%" data-cy="comment" id={anchorHash}>
+      <Flex mb={3} justifyContent="space-between" flexWrap="wrap">
         <Flex>
           <Box mr={3}>
             <LinkCollective collective={comment.fromAccount}>
@@ -76,14 +78,17 @@ const Comment = ({
           </Flex>
         </Flex>
         {hasActions && (
-          <CommentActions
-            comment={comment}
-            isConversationRoot={isConversationRoot}
-            canEdit={canEdit}
-            canDelete={canDelete}
-            onDelete={onDelete}
-            onEditClick={() => setEditing(true)}
-          />
+          <Flex gap={12} alignItems="flex-start" flexGrow={1} justifyContent="flex-end">
+            <ShareButton anchorHash={anchorHash} />
+            <CommentActions
+              comment={comment}
+              isConversationRoot={isConversationRoot}
+              canEdit={canEdit}
+              canDelete={canDelete}
+              onDelete={onDelete}
+              onEditClick={() => setEditing(true)}
+            />
+          </Flex>
         )}
       </Flex>
 

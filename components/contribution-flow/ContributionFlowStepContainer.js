@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import { Box, Flex } from '../Grid';
+import ShareButton from '../ShareButton';
 import StyledCard from '../StyledCard';
 import StyledHr from '../StyledHr';
 import { H4 } from '../Text';
 import { withUser } from '../UserProvider';
 
-import ShareButton from './ShareButton';
 import StepCheckout from './StepCheckout';
 import StepDetails from './StepDetails';
 import StepDetailsCrypto from './StepDetailsCrypto';
