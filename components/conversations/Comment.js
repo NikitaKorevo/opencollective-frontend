@@ -55,7 +55,7 @@ const Comment = ({
 
   return (
     <Container width="100%" data-cy="comment" id={anchorHash}>
-      <Flex mb={3} justifyContent="space-between" flexWrap="wrap">
+      <Flex mb={3} gap="0px 4px" justifyContent="space-between" flexWrap="wrap">
         <Flex>
           <Box mr={3}>
             <LinkCollective collective={comment.fromAccount}>
@@ -77,9 +77,9 @@ const Comment = ({
             </P>
           </Flex>
         </Flex>
-        {hasActions && (
-          <Flex gap={12} alignItems="flex-start" flexGrow={1} justifyContent="flex-end">
-            <ShareButton anchorHash={anchorHash} />
+        <Flex gap={8} alignItems="flex-start" flexGrow={1} justifyContent="flex-end">
+          {!isEditing && <ShareButton anchorHash={anchorHash} />}
+          {hasActions && (
             <CommentActions
               comment={comment}
               isConversationRoot={isConversationRoot}
@@ -88,8 +88,8 @@ const Comment = ({
               onDelete={onDelete}
               onEditClick={() => setEditing(true)}
             />
-          </Flex>
-        )}
+          )}
+        </Flex>
       </Flex>
 
       <Box position="relative" maxHeight={maxCommentHeight} css={{ overflowY: 'auto' }}>
