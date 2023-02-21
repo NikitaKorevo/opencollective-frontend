@@ -33,10 +33,16 @@ const withData = ComposedComponent => {
         composedInitialProps = await ComposedComponent.getInitialProps({ ...context, client });
       }
 
+      console.log('ComposedComponent', ComposedComponent);
+
+      /* console.log('composedInitialProps', composedInitialProps); */
+
       try {
         // Run all GraphQL queries
         const skipDataFromTree = composedInitialProps['pageProps']?.skipDataFromTree || false;
+        console.log('skipDataFromTree', skipDataFromTree);
         if (!skipDataFromTree) {
+          console.log('getDataFromTree run');
           await getDataFromTree(<ComposedComponent Component={Component} {...composedInitialProps} />, { client });
         }
       } catch (error) {
