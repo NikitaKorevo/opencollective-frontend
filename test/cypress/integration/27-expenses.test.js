@@ -264,6 +264,8 @@ describe('New expense flow', () => {
       });
 
       it('can invite a third-party user to submit an expense', () => {
+        cy.clearInbox();
+
         const inviteeEmail = randomEmail();
         cy.getByDataCy('radio-expense-type-INVOICE').click();
 
@@ -288,18 +290,10 @@ describe('New expense flow', () => {
         cy.getByDataCy('expense-summary-payee').should('contain', 'Nicolas Cage');
 
         // Log out and submit as invitee...
-        cy.url({ log: true })
-          .then(_url => {
-            const [, collective, expenseId] = _url.match(/\/([\w-]+)\/expenses\/(\w+)$/);
-            return { collective, expenseId };
-          })
-          .as('createdExpense');
         cy.logout();
-        cy.reload();
 
-        cy.get('@createdExpense').then(createdExpense => {
-          cy.visit(`/${createdExpense.collective}/expenses/${createdExpense.expenseId}?key=draft-key`);
-        });
+        cy.openEmail(({ subject }) => subject.includes('wants to pay you'));
+        cy.contains('a', "OK, let's go!").click();
 
         cy.getByDataCy('country-select').click();
         cy.contains('[data-cy="select-option"]', 'Angola').click();
@@ -319,16 +313,10 @@ describe('New expense flow', () => {
         cy.get('[data-cy="checkbox-tos"] [data-cy="custom-checkbox"]').click();
         cy.getByDataCy('save-expense-btn').click();
         cy.wait(500);
-        cy.getByDataCy('expense-status-msg').should('contain', 'Pending');
         cy.getByDataCy('expense-status-msg').parent().should('contain', 'Unverified');
 
-        cy.get('@createdExpense').then(createdExpense => {
-          cy.login({
-            email: inviteeEmail,
-            redirect: `/${createdExpense.collective}/expenses/${createdExpense.expenseId}`,
-          });
-          cy.visit(`/${createdExpense.collective}/expenses/${createdExpense.expenseId}`);
-        });
+        cy.openEmail(({ subject }) => subject.includes('Open Collective: Sign In'));
+        cy.contains('a', 'One-click Sign In').click();
 
         cy.getByDataCy('expense-status-msg').should('contain', 'Pending');
         cy.getByDataCy('expense-author').should('contain', 'Invited by');
@@ -338,6 +326,9 @@ describe('New expense flow', () => {
       });
 
       it('can invite a third-party organization to submit an expense', () => {
+        cy.login({ email: user.email, redirect: `/${collective.slug}/expenses/new` });
+        cy.clearInbox();
+
         const inviteeEmail = randomEmail();
         cy.getByDataCy('radio-expense-type-INVOICE').click();
 
@@ -366,19 +357,10 @@ describe('New expense flow', () => {
         cy.getByDataCy('expense-summary-payee').should('contain', 'Hollywood');
 
         // Log out and submit as invitee...
-        cy.url({ log: true })
-          .then(_url => {
-            const [, collective, expenseId] = _url.match(/\/([\w-]+)\/expenses\/(\w+)$/);
-            return { collective, expenseId };
-          })
-          .as('createdExpense');
-
-        cy.visit('/');
         cy.logout();
-        cy.reload();
-        cy.get('@createdExpense').then(createdExpense => {
-          cy.visit(`/${createdExpense.collective}/expenses/${createdExpense.expenseId}?key=draft-key`);
-        });
+
+        cy.openEmail(({ subject }) => subject.includes('wants to pay you'));
+        cy.contains('a', "OK, let's go!").click();
 
         cy.getByDataCy('country-select').click();
         cy.contains('[data-cy="select-option"]', 'Angola').click();
@@ -398,15 +380,11 @@ describe('New expense flow', () => {
         cy.get('[data-cy="checkbox-tos"] [data-cy="custom-checkbox"]').click();
         cy.getByDataCy('save-expense-btn').click();
         cy.wait(500);
-        cy.getByDataCy('expense-status-msg').should('contain', 'Pending');
         cy.getByDataCy('expense-status-msg').parent().should('contain', 'Unverified');
-        cy.get('@createdExpense').then(createdExpense => {
-          cy.login({
-            email: inviteeEmail,
-            redirect: `/${createdExpense.collective}/expenses/${createdExpense.expenseId}`,
-          });
-          cy.visit(`/${createdExpense.collective}/expenses/${createdExpense.expenseId}`);
-        });
+
+        cy.openEmail(({ subject }) => subject.includes('Open Collective: Sign In'));
+        cy.contains('a', 'One-click Sign In').click();
+
         cy.getByDataCy('expense-status-msg').should('contain', 'Pending');
         cy.getByDataCy('expense-author').should('contain', 'Invited by');
         cy.getByDataCy('expense-summary-payee').should('contain', 'Hollywood');
