@@ -251,7 +251,6 @@ const PayExpenseModal = ({ onClose, onSubmit, expense, collective, host, error, 
             items={['AUTO', 'MANUAL']}
             buttonProps={{ width: '50%' }}
             buttonPropsBuilder={({ item }) => ({ 'data-cy': `pay-type-${item}` })}
-            mt={3}
             selected={formik.values.forceManual ? 'MANUAL' : 'AUTO'}
             customBorderRadius="6px"
             onChange={item => {
@@ -265,6 +264,7 @@ const PayExpenseModal = ({ onClose, onSubmit, expense, collective, host, error, 
                   : formik.values.feesPayer,
               });
             }}
+            styles={{ mt: 3 }}
           >
             {({ item }) =>
               item === 'AUTO' ? (

@@ -71,12 +71,14 @@ class GiftCards extends React.Component {
     const query = this.getQueryParams(['filter', 'batch']);
     return (
       <StyledButtonSet
-        justifyContent="center"
-        mt={[4, 0]}
         items={['all', 'redeemed', 'pending']}
         selected={selected}
         buttonProps={{ p: 1 }}
-        display="block"
+        styles={{
+          display: 'block',
+          justifyContent: 'center',
+          mt: [4, 0],
+        }}
       >
         {({ item, isSelected }) => (
           <Link

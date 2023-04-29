@@ -196,9 +196,8 @@ export const PeriodFilterForm = ({
           </Flex>
         }
       >
-        {inputProps => (
+        {({ id, name }) => (
           <StyledButtonSet
-            {...inputProps}
             size="tiny"
             items={['local', 'UTC']}
             buttonProps={{ p: 1, fontSize: '13px', fontWeight: 400 }}
@@ -208,6 +207,7 @@ export const PeriodFilterForm = ({
               setTmpDateInterval(getIntervalFromValue({ ...tmpDateInterval, timezoneType }));
             }}
             disabled={disabled}
+            styles={{ id, name }}
           >
             {({ item }) => {
               switch (item) {

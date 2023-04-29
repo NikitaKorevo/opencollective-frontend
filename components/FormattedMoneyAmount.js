@@ -45,7 +45,7 @@ const FormattedMoneyAmount = ({
         currency={currency}
         precision={precision}
         formatWithSeparators={formatWithSeparators}
-        {...amountStyles}
+        styles={{ ...amountStyles }}
       />
     );
 

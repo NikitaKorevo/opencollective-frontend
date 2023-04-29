@@ -78,21 +78,23 @@ const StepDetails = ({ onChange, data, collective, tier, showPlatformTip, router
         </P>
       ) : supportsRecurring ? (
         <StyledButtonSet
-          id="interval"
-          justifyContent="center"
-          mt={[4, 0]}
-          mb="30px"
           items={[INTERVALS.oneTime, INTERVALS.month, INTERVALS.year]}
           selected={selectedInterval || null}
           buttonProps={{ px: 2, py: '5px' }}
-          role="group"
-          aria-label="Amount types"
           onChange={interval => {
             if (tier && tier.interval !== INTERVALS.flexible) {
               setTemporaryInterval(interval);
             } else {
               dispatchChange('interval', interval);
             }
+          }}
+          styles={{
+            id: 'interval',
+            justifyContent: 'center',
+            mt: [4, 0],
+            mb: '30px',
+            role: 'group',
+            'aria-label': 'Amount types',
           }}
         >
           {({ item, isSelected }) => (
