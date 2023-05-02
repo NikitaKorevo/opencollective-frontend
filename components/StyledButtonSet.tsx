@@ -45,7 +45,7 @@ type StyledButtonItemProps<T> = {
   index: number;
   item: T;
   children: ({ item, isSelected }: { item: T; isSelected: boolean }) => ReactNode;
-  size?: ButtonSize;
+  size: ButtonSize;
   selected?: T;
   onChange?: (item: T) => void;
   disabled?: boolean;
@@ -59,12 +59,12 @@ type StyledButtonItemProps<T> = {
     isSelected: boolean;
   }) => StyledButtonProps;
   buttonProps?: StyledButtonProps;
-  customBorderRadius?: string;
+  customBorderRadius: string;
 };
 
 const StyledButtonItem = ({
   index,
-  size = 'medium',
+  size,
   item,
   children,
   selected,
@@ -72,7 +72,7 @@ const StyledButtonItem = ({
   buttonPropsBuilder,
   onChange,
   disabled,
-  customBorderRadius = '4px',
+  customBorderRadius,
 }: StyledButtonItemProps<string | number>) => {
   const isSelected = item === selected;
   const [isAlwaysShown, setIsAlwaysShown] = useState(isSelected);
@@ -133,19 +133,35 @@ type StyledButtonSetProps<T> = {
   customBorderRadius?: string;
   /** An optional set of props passed to the `Container` */
   styles?: ContainerProps;
-  'data-cy'?: string;
 };
 
 const StyledButtonSet = ({
-  children,
+  size = 'medium',
   items,
+  children,
+  selected,
+  buttonProps,
+  buttonPropsBuilder,
+  onChange,
+  disabled,
+  customBorderRadius = '4px',
   styles = {},
-  'data-cy': dataCy,
   ...props
 }: StyledButtonSetProps<string | number>) => (
-  <Container display="flex" data-cy={dataCy} {...styles} as={undefined}>
+  <Container display="flex" {...styles} {...props} as={undefined}>
     {items.map((item, index) => (
-      <StyledButtonItem key={item} index={index} item={item} {...props}>
+      <StyledButtonItem
+        key={item}
+        index={index}
+        item={item}
+        size={size}
+        selected={selected}
+        buttonProps={buttonProps}
+        buttonPropsBuilder={buttonPropsBuilder}
+        onChange={onChange}
+        disabled={disabled}
+        customBorderRadius={customBorderRadius}
+      >
         {children}
       </StyledButtonItem>
     ))}
